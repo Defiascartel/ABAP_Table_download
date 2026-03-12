@@ -1,4 +1,4 @@
-# Z_EXTRACT_TABLE_META — Estrattore Metadati Tabelle SAP per Claude Code
+# Z_EXTRACT_TABLE_META — Estrattore Metadati Tabelle SAP per AI
 
 ## Scopo
 Report ABAP che estrae la struttura completa delle tabelle SAP in formato JSON, CSV o Markdown,
