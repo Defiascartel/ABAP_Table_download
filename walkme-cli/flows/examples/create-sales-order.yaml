@@ -1,0 +1,109 @@
+# Esempio: Creazione Ordine di Vendita (VA01)
+# Genera con: walkme-cli generate -f flows/examples/create-sales-order.yaml
+
+name: "Guida: Creazione Ordine di Vendita"
+description: "Smart Walk-Thru che guida l'utente nella creazione di un ordine di vendita in SAP S/4HANA Fiori"
+transaction: VA01
+fioriApp: SalesOrder-create
+language: it
+tags:
+  - SD
+  - VA01
+  - Sales Order
+  - SAP Fiori
+
+steps:
+  - type: popup
+    title: Benvenuto
+    content: >
+      Questa guida ti accompagnerà nella creazione di un nuovo ordine di vendita.
+      Segui i passaggi indicati per completare l'operazione.
+    fioriElement: shell-header
+    position: bottom
+
+  - type: click
+    title: Apri l'app
+    content: Cerca e clicca sul tile "Create Sales Order" nel Launchpad.
+    element: tile
+    elementTitle: Create Sales Order
+
+  - type: waitFor
+    title: Caricamento
+    content: Attendi il caricamento del form ordine di vendita.
+    selector: "[id*='orderType']"
+    timeout: 15000
+
+  - type: select
+    title: Tipo ordine
+    content: Seleziona il tipo di ordine di vendita (es. OR - Standard Order).
+    selector: "[id*='orderType'] input"
+    selectValue: OR
+
+  - type: type
+    title: Organizzazione vendite
+    content: Inserisci l'organizzazione vendite.
+    selector: "[id*='salesOrg'] input"
+    inputValue: "1000"
+
+  - type: type
+    title: Canale distributivo
+    content: Inserisci il canale distributivo.
+    selector: "[id*='distChannel'] input"
+    inputValue: "10"
+
+  - type: type
+    title: Settore
+    content: Inserisci il settore merceologico.
+    selector: "[id*='division'] input"
+    inputValue: "00"
+
+  - type: type
+    title: Committente
+    content: Inserisci il numero del committente (cliente).
+    selector: "[id*='soldToParty'] input"
+    inputValue: ""
+    placeholder: "Numero cliente"
+
+  - type: click
+    title: Aggiungi materiale
+    content: Nella tabella posizioni, clicca sulla prima riga per inserire il materiale.
+    selector: ".sapUiTableRow:nth-child(1) .sapUiTableCell:nth-child(2)"
+
+  - type: type
+    title: Numero materiale
+    content: Inserisci il codice del materiale da ordinare.
+    selector: ".sapUiTableRow:nth-child(1) [id*='material'] input"
+    inputValue: ""
+    placeholder: "Codice materiale"
+
+  - type: type
+    title: Quantità
+    content: Inserisci la quantità ordinata.
+    selector: ".sapUiTableRow:nth-child(1) [id*='quantity'] input"
+    inputValue: ""
+    placeholder: "Quantità"
+
+  - type: popup
+    title: Verifica dati
+    content: >
+      Verifica tutti i dati inseriti prima di salvare.
+      Controlla in particolare: committente, materiali, quantità e condizioni di prezzo.
+    fioriElement: object-page
+    position: top
+
+  - type: click
+    title: Salva l'ordine
+    content: Clicca su "Salva" per creare l'ordine di vendita.
+    fioriElement: save-btn
+
+  - type: popup
+    title: Completato!
+    content: >
+      L'ordine di vendita è stato creato con successo.
+      Il numero ordine è visualizzato nella barra dei messaggi in basso.
+    selector: ".sapMMsgStrip"
+    position: top
+
+goals:
+  - name: Ordine di vendita creato
+    type: custom

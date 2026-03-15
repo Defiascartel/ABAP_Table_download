@@ -1,0 +1,99 @@
+# Esempio: Creazione Ordine di Acquisto (ME21N)
+# Genera con: walkme-cli generate -f flows/examples/create-purchase-order.yaml
+
+name: "Guida: Creazione Ordine di Acquisto"
+description: "Smart Walk-Thru per creare un Purchase Order in SAP S/4HANA Fiori"
+transaction: ME21N
+fioriApp: PurchaseOrder-create
+language: it
+tags:
+  - MM
+  - ME21N
+  - Purchase Order
+  - SAP Fiori
+
+steps:
+  - type: popup
+    title: Benvenuto
+    content: >
+      Questa guida ti mostrerà come creare un ordine di acquisto (Purchase Order)
+      in SAP S/4HANA.
+    fioriElement: shell-header
+    position: bottom
+
+  - type: click
+    title: Apri l'applicazione
+    content: Clicca sul tile "Create Purchase Order" nel Launchpad.
+    element: tile
+    elementTitle: Create Purchase Order
+
+  - type: waitFor
+    title: Caricamento
+    content: Attendi il caricamento dell'applicazione.
+    fioriElement: filter-bar
+    timeout: 15000
+
+  - type: type
+    title: Fornitore
+    content: Inserisci il numero del fornitore.
+    selector: "[id*='supplier'] input, [id*='vendor'] input"
+    inputValue: ""
+    placeholder: "Numero fornitore"
+
+  - type: type
+    title: Organizzazione acquisti
+    content: Inserisci l'organizzazione acquisti.
+    selector: "[id*='purchOrg'] input"
+    inputValue: "1000"
+
+  - type: type
+    title: Gruppo acquisti
+    content: Inserisci il gruppo acquisti.
+    selector: "[id*='purchGroup'] input"
+    inputValue: "001"
+
+  - type: type
+    title: Società
+    content: Inserisci il codice società.
+    selector: "[id*='companyCode'] input"
+    inputValue: "1000"
+
+  - type: click
+    title: Aggiungi posizione
+    content: Clicca su "Aggiungi" per inserire una nuova posizione nell'ordine.
+    fioriElement: create-btn
+
+  - type: type
+    title: Materiale
+    content: Inserisci il codice materiale.
+    selector: ".sapUiTableRow:nth-child(1) [id*='material'] input"
+    inputValue: ""
+    placeholder: "Codice materiale"
+
+  - type: type
+    title: Quantità
+    content: Inserisci la quantità da ordinare.
+    selector: ".sapUiTableRow:nth-child(1) [id*='quantity'] input"
+    inputValue: ""
+    placeholder: "Quantità"
+
+  - type: type
+    title: Divisione
+    content: Inserisci la divisione (plant).
+    selector: ".sapUiTableRow:nth-child(1) [id*='plant'] input"
+    inputValue: "1000"
+
+  - type: click
+    title: Salva
+    content: Clicca su "Salva" per creare l'ordine di acquisto.
+    fioriElement: save-btn
+
+  - type: popup
+    title: Fatto!
+    content: L'ordine di acquisto è stato creato. Annota il numero PO dalla barra messaggi.
+    selector: ".sapMMsgStrip"
+    position: top
+
+goals:
+  - name: Purchase Order creato
+    type: custom
