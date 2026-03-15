@@ -14,6 +14,10 @@ const DEFAULT_CONFIG = {
   defaultLanguage: 'it',
   defaultFormat: 'yaml',
   claudeModel: 'claude-sonnet-4-20250514',
+  walkmeClientId: null,
+  walkmeClientSecret: null,
+  walkmeSystemId: null,
+  walkmeRegion: 'us',
 };
 
 export function loadConfig() {
