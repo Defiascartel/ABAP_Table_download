@@ -33,6 +33,17 @@ import {
   createSplitStep,
   createAutoStep,
   createGoal,
+  createSmartTipSet,
+  createSmartTip,
+  createLauncher,
+  createShoutOut,
+  createShoutOutButton,
+  createSurvey,
+  createSurveyQuestion,
+  createShuttle,
+  createShuttlePage,
+  createResourceMenu,
+  createResourceItem,
   validateFlow,
   flowToSimpleFormat,
 } from './schema/walkme-flow.js';
@@ -255,6 +266,216 @@ export function generateTemplateForTransaction(tcode) {
   };
 
   return generateFlowFromSpec(spec);
+}
+
+// ─── Generatori per tutti i tipi di contenuto ─────────────
+
+/**
+ * Genera un set di SmartTips da specifica
+ */
+export function generateSmartTipsFromSpec(spec) {
+  const tipSet = createSmartTipSet({
+    name: spec.name,
+    description: spec.description || '',
+    sapTransaction: spec.transaction || null,
+    fioriApp: spec.fioriApp || null,
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+  });
+
+  if (spec.tips && Array.isArray(spec.tips)) {
+    tipSet.smartTips.tips = spec.tips.map((tipSpec, i) => {
+      const selector = resolveSelector(tipSpec);
+      return createSmartTip({
+        selector,
+        title: tipSpec.title || '',
+        content: tipSpec.content || tipSpec.text || '',
+        position: tipSpec.position || 'auto',
+        trigger: tipSpec.trigger || 'hover',
+        icon: tipSpec.icon || 'info',
+        rules: tipSpec.rules || null,
+        order: i + 1,
+      });
+    });
+  }
+
+  return tipSet;
+}
+
+/**
+ * Genera un Launcher da specifica
+ */
+export function generateLauncherFromSpec(spec) {
+  return createLauncher({
+    name: spec.name,
+    description: spec.description || '',
+    sapTransaction: spec.transaction || null,
+    fioriApp: spec.fioriApp || null,
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+    shape: spec.shape || 'button',
+    icon: spec.icon || 'play',
+    label: spec.label || '',
+    position: spec.position || 'bottom-right',
+    action: spec.action || { type: 'startWalkThru', target: null },
+    rules: spec.rules || null,
+  });
+}
+
+/**
+ * Genera uno ShoutOut da specifica
+ */
+export function generateShoutOutFromSpec(spec) {
+  const shoutOut = createShoutOut({
+    name: spec.name,
+    description: spec.description || '',
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+    template: spec.template || 'dialog',
+    title: spec.title || spec.name,
+    content: spec.content || '',
+    position: spec.position || 'center',
+    frequency: spec.frequency || 'once',
+    segmentation: spec.segmentation || null,
+    rules: spec.rules || null,
+  });
+
+  if (spec.buttons && Array.isArray(spec.buttons)) {
+    shoutOut.shoutOut.buttons = spec.buttons.map(b => createShoutOutButton(b));
+  }
+
+  if (spec.media) {
+    shoutOut.shoutOut.media = spec.media;
+  }
+
+  return shoutOut;
+}
+
+/**
+ * Genera un Survey da specifica
+ */
+export function generateSurveyFromSpec(spec) {
+  const survey = createSurvey({
+    name: spec.name,
+    description: spec.description || '',
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+    title: spec.title || spec.name,
+    thankYouMessage: spec.thankYouMessage || 'Grazie per il tuo feedback!',
+    frequency: spec.frequency || 'once',
+    segmentation: spec.segmentation || null,
+    rules: spec.rules || null,
+  });
+
+  if (spec.questions && Array.isArray(spec.questions)) {
+    survey.survey.questions = spec.questions.map((q, i) =>
+      createSurveyQuestion({
+        questionText: q.questionText || q.text || q.question || '',
+        type: q.type || 'rating',
+        required: q.required !== false,
+        options: q.options || [],
+        scaleMin: q.scaleMin || 1,
+        scaleMax: q.scaleMax || 5,
+        scaleLabels: q.scaleLabels || null,
+        placeholder: q.placeholder || '',
+        order: i + 1,
+      })
+    );
+  }
+
+  return survey;
+}
+
+/**
+ * Genera uno Shuttle da specifica
+ */
+export function generateShuttleFromSpec(spec) {
+  const shuttle = createShuttle({
+    name: spec.name,
+    description: spec.description || '',
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+    title: spec.title || spec.name,
+    position: spec.position || 'center',
+    frequency: spec.frequency || 'once',
+    segmentation: spec.segmentation || null,
+    rules: spec.rules || null,
+  });
+
+  if (spec.pages && Array.isArray(spec.pages)) {
+    shuttle.shuttle.pages = spec.pages.map((p, i) =>
+      createShuttlePage({
+        title: p.title || '',
+        content: p.content || p.text || '',
+        media: p.media || null,
+        buttons: p.buttons || [],
+        order: i + 1,
+      })
+    );
+  }
+
+  return shuttle;
+}
+
+/**
+ * Genera un Resource menu da specifica
+ */
+export function generateResourceMenuFromSpec(spec) {
+  const menu = createResourceMenu({
+    name: spec.name,
+    description: spec.description || '',
+    language: spec.language || 'it',
+    tags: spec.tags || [],
+    title: spec.title || 'Risorse',
+    icon: spec.icon || 'help',
+    position: spec.position || 'bottom-right',
+    searchEnabled: spec.searchEnabled !== false,
+    rules: spec.rules || null,
+  });
+
+  if (spec.items && Array.isArray(spec.items)) {
+    menu.resource.items = spec.items.map((item, i) =>
+      createResourceItem({
+        title: item.title || '',
+        description: item.description || '',
+        type: item.type || 'walkthru',
+        target: item.target || null,
+        icon: item.icon || null,
+        category: item.category || null,
+        order: i + 1,
+      })
+    );
+  }
+
+  return menu;
+}
+
+/**
+ * Genera qualsiasi tipo di contenuto WalkMe da specifica
+ */
+export function generateFromSpec(spec) {
+  const contentType = (spec.contentType || spec.type || 'SmartWalkThru').toLowerCase();
+
+  const generators = {
+    smartwalkthru: generateFlowFromSpec,
+    walkthru: generateFlowFromSpec,
+    flow: generateFlowFromSpec,
+    smarttips: generateSmartTipsFromSpec,
+    tips: generateSmartTipsFromSpec,
+    launcher: generateLauncherFromSpec,
+    shoutout: generateShoutOutFromSpec,
+    survey: generateSurveyFromSpec,
+    shuttle: generateShuttleFromSpec,
+    resource: generateResourceMenuFromSpec,
+    resources: generateResourceMenuFromSpec,
+  };
+
+  const generator = generators[contentType];
+  if (!generator) {
+    throw new Error(`Tipo di contenuto non supportato: ${contentType}. Usa: SmartWalkThru, SmartTips, Launcher, ShoutOut, Survey, Shuttle, Resource`);
+  }
+
+  return generator(spec);
 }
 
 /**

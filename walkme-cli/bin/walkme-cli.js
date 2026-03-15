@@ -55,6 +55,10 @@ import {
   segmentsListCommand, segmentsGetCommand, segmentsCreateCommand,
   segmentsUpdateCommand, segmentsDeleteCommand, segmentsMembersCommand,
 } from '../src/commands/segments.js';
+import {
+  smartTipsCommand, launcherCommand, shoutOutCommand,
+  surveyCommand, shuttleCommand, resourceCommand,
+} from '../src/commands/create-content.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -112,6 +116,52 @@ program
   .option('-o, --output <path>', 'File di output')
   .option('--format <format>', 'Formato: json o yaml', 'json')
   .action(templateCommand);
+
+// ─── Creazione altri tipi di contenuto ─────────────────────
+
+const CONTENT_OPTS = [
+  ['-f, --file <path>', 'File di specifica JSON o YAML'],
+  ['-o, --output <path>', 'File di output'],
+  ['--format <format>', 'Formato: json o yaml', 'json'],
+  ['--simple', 'Output semplificato'],
+];
+
+function addContentOpts(cmd) {
+  CONTENT_OPTS.forEach(opt => cmd.option(...opt));
+  return cmd;
+}
+
+addContentOpts(program
+  .command('smarttips')
+  .alias('tips')
+  .description('Genera un set di SmartTips (tooltip contestuali su elementi UI)'))
+  .action(smartTipsCommand);
+
+addContentOpts(program
+  .command('launcher')
+  .description('Genera un Launcher (pulsante/widget che avvia azioni)'))
+  .action(launcherCommand);
+
+addContentOpts(program
+  .command('shoutout')
+  .description('Genera uno ShoutOut (banner/popup overlay informativo)'))
+  .action(shoutOutCommand);
+
+addContentOpts(program
+  .command('survey')
+  .description('Genera un Survey (sondaggio in-app)'))
+  .action(surveyCommand);
+
+addContentOpts(program
+  .command('shuttle')
+  .description('Genera uno Shuttle (popup informativo multi-pagina)'))
+  .action(shuttleCommand);
+
+addContentOpts(program
+  .command('resource')
+  .alias('res')
+  .description('Genera un menu Resources (help center in-app)'))
+  .action(resourceCommand);
 
 // ─── Gestione Contenuti WalkMe ─────────────────────────────
 
