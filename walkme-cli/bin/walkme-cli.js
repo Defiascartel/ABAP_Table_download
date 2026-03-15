@@ -11,6 +11,9 @@
  *   walkme-cli validate <file>       Valida un flusso WalkMe
  *   walkme-cli convert <file>        Converte tra JSON e YAML
  *   walkme-cli selectors             Mostra i selettori SAP Fiori disponibili
+ *   walkme-cli pdf <file>            Analizza un PDF di processo SAP con Claude AI
+ *   walkme-cli pdf-extract <file>    Estrai solo testo dal PDF (senza API)
+ *   walkme-cli config                Gestisci configurazione (API key, ecc.)
  */
 
 import { Command } from 'commander';
@@ -21,6 +24,8 @@ import { validateCommand } from '../src/commands/validate.js';
 import { convertCommand } from '../src/commands/convert.js';
 import { selectorsCommand } from '../src/commands/selectors.js';
 import { specCommand } from '../src/commands/spec.js';
+import { pdfCommand, pdfExtractCommand } from '../src/commands/pdf.js';
+import { configCommand } from '../src/commands/config.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -86,5 +91,33 @@ program
   .description('Mostra i selettori CSS disponibili per SAP Fiori / BTP Work Zone')
   .option('-g, --group <group>', 'Gruppo: shell, launchpad, btp, form, table, toolbar, dialog, objectpage, navigation')
   .action(selectorsCommand);
+
+program
+  .command('pdf')
+  .description('Analizza un PDF di processo SAP con Claude AI e genera il flusso WalkMe')
+  .argument('<file>', 'File PDF da analizzare')
+  .option('-o, --output <path>', 'File di output')
+  .option('--format <format>', 'Formato: json o yaml', 'yaml')
+  .option('--simple', 'Output in formato semplificato')
+  .option('-t, --transaction <tcode>', 'Codice transazione SAP per contesto')
+  .option('-c, --context <text>', 'Contesto aggiuntivo per l\'analisi')
+  .option('--model <model>', 'Modello Claude da usare', 'claude-sonnet-4-20250514')
+  .action(pdfCommand);
+
+program
+  .command('pdf-extract')
+  .description('Estrai solo il testo da un PDF (senza API key)')
+  .argument('<file>', 'File PDF')
+  .option('-o, --output <path>', 'File di output per il testo estratto')
+  .action(pdfExtractCommand);
+
+program
+  .command('config')
+  .description('Gestisci configurazione (API key, preferenze)')
+  .option('--api-key <key>', 'Imposta API key Anthropic')
+  .option('--language <lang>', 'Lingua default (it, en, de, fr)')
+  .option('--format <format>', 'Formato default (json, yaml)')
+  .option('--model <model>', 'Modello Claude default')
+  .action(configCommand);
 
 program.parse();
