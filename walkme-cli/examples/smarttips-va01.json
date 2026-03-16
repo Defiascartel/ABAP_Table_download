@@ -1,0 +1,30 @@
+{
+  "contentType": "SmartTips",
+  "name": "Tips per form Ordine Vendita VA01",
+  "description": "Spiegazioni sui campi principali del form VA01",
+  "transaction": "VA01",
+  "tags": ["SD", "onboarding"],
+  "tips": [
+    {
+      "selector": "input[id*=\"customer\"]",
+      "title": "Codice Cliente",
+      "content": "Inserisci il codice SAP del cliente (es. 1000). Usa il Value Help per cercare.",
+      "trigger": "focus",
+      "icon": "info"
+    },
+    {
+      "selector": "input[id*=\"material\"]",
+      "title": "Materiale",
+      "content": "Codice materiale da ordinare. Verifica la disponibilità prima di confermare.",
+      "trigger": "focus",
+      "icon": "info"
+    },
+    {
+      "selector": ".sapMBarChild button[id*=\"Save\"]",
+      "title": "Salva ordine",
+      "content": "Attenzione: il salvataggio è definitivo. Verifica tutti i dati prima di procedere.",
+      "trigger": "hover",
+      "icon": "warning"
+    }
+  ]
+}
